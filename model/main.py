@@ -11,8 +11,8 @@ import os
 
 
 mydir = expanduser("~/")
-sys.path.append(mydir + "GitHub/Emergence/model")
-GenPath = mydir + "GitHub/ScaleEmerge/results/simulated_data/"
+sys.path.append(mydir + "GitHub/Emergence-Senescence/model")
+GenPath = mydir + "GitHub/Emergence-Senescence/results/simulated_data/"
 
 col_headers = 'sim,gr,mt,q,ct,total.abundance,species.richness,simpson.e,N.max,logmod.skew'
 OUT = open(GenPath + 'SimData.csv', 'w+')
