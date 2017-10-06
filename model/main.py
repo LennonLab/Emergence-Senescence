@@ -122,12 +122,10 @@ def maintenance(iD):
 def reproduce(sD, iD, ps, p = 0):
     for k, v in iD.items():
         if v['q'] > v['mt']*2 and np.random.binomial(1, v['gr']) == 1:
-            iD[k]['q'] = v['q']*.85
+            iD[k]['q'] = v['q']/2.0
             iD[k]['age']+=1
             i = time.time()
             iD[i] = copy.copy(iD[k])
-            iD[i]['q']=v['q']/.85*.15
-            iD[i]['age']=0
     return [sD, iD]
 
 
