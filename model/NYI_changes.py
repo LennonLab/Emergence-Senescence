@@ -5,9 +5,11 @@ from numpy import log10
 from scipy import stats
 import numpy as np
 import time
+import math
 import copy
 import sys
 import os
+from pprint import pprint as pp
 
 
 mydir = expanduser("~/")
@@ -35,6 +37,10 @@ def e_simpson(sad):
     for x in sad: D += (x*x) / (N*N)
     E = round((1.0/D)/S, 4)
     return E
+    
+senesce_simple = lambda age, rls: 1-(age/rls)
+
+tradeoff_reverse_logistic = lambda rls: 2 / (2 + math.exp((0.2*rls)-12))#in the full implementation, don't enforce these parameters
 
 
 def output(iD, sD, rD, sim, ct):
@@ -68,7 +74,7 @@ def output(iD, sD, rD, sim, ct):
 
 
 def immigration(sD, iD, ps, sd=1):
-    r, u, gr, mt, q = ps
+    r, u, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv = ps
 
     for j in range(sd):
         if sd == 1 and np.random.binomial(1, u) == 0: continue
@@ -76,21 +82,34 @@ def immigration(sD, iD, ps, sd=1):
         if p not in sD:
             sD[p] = {'gr' : 10**np.random.uniform(gr, 0)}
             sD[p]['mt'] = 10**np.random.uniform(mt, 0)
+            sD[p]['rls'] = randint(rls_min,rls_max)
+            temp=sD[p]['gr']
+            sD[p]['gr']=np.random.uniform(temp*tradeoff_reverse_logistic(sD[p]['rls']),temp)
+            sD[p]['grcv']=10**np.random.uniform(grcv,-0.3)
+            sD[p]['mtcv']=10**np.random.uniform(mtcv,-0.3)
+            sD[p]['rlscv']=10**np.random.uniform(rlscv,-0.3)
             es = np.random.uniform(1, 100, 3)
             sD[p]['ef'] = es/sum(es)
 
         ID = time.time()
         iD[ID] = copy.copy(sD[p])
         iD[ID]['sp'] = p
+        #print iD[ID]['sp']
+        #pp(sD)
         iD[ID]['x'] = 0
         iD[ID]['y'] = 0
+        iD[ID]['age']=0
+        iD[ID]['rls']=sD[p]['rls']
+        iD[ID]['gr']=sD[p]['gr']
+        iD[ID]['mt']=sD[p]['mt']
         iD[ID]['q'] = 10**np.random.uniform(0, q)
+
 
     return [sD, iD]
 
 
 def consume(iD, rD, ps):
-    r, u, gr, mt, q = ps
+    r, u, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv = ps
     keys = list(iD)
     shuffle(keys)
     for k in keys:
@@ -119,18 +138,42 @@ def maintenance(iD):
     return iD
 
 
+    
+
 def reproduce(sD, iD, ps, p = 0):
     for k, v in iD.items():
-        if v['q'] > v['mt']*2 and np.random.binomial(1, v['gr']) == 1:
-            iD[k]['q'] = v['q']*.85
-            iD[k]['age']+=1
-            i = time.time()
-            iD[i] = copy.copy(iD[k])#in addition to copying physiology, need to copy the RLSmax---
-            #RLSmax is determined genetically so there should be a chance of mutation, probably with normally distributed
-            #effect sizes
-            iD[i]['RLS']=np.random.normal(v['RLS'],1.0,None)
-            iD[i]['q']=v['q']/.85*.15
-            iD[i]['age']=0#need to add an 'age' initiator to the run_model function, I think
+        if v['gr'] > 1 or v['gr'] <= 0:
+            del iD[k]; continue
+        elif v['q'] > v['mt']*2 and np.random.binomial(1, v['gr']) == 1:
+            if v['age'] >= v['rls'] or v['mt']<0:
+                del iD[k]; continue
+            else:
+                iD[k]['q'] = v['q']*0.85
+                iD[k]['age']+=1
+                iD[k]['gr']=v['gr']*senesce_simple(v['age'],v['rls'])#modifier based on the newly incremented age value
+                #in full implementation the sscnc model will be chosen at random from a list of choices
+                i = time.time()
+                iD[i] = copy.deepcopy(iD[k])
+                #in addition to copying physiology, need to copy the rlsmax---
+                #rlsmax is determined genetically so there should be a chance of mutation, probably with normally distributed
+                #effect sizes
+                iD[i]['rls']=np.random.normal(v['rls'],sD[v['sp']]['rlscv']*v['rls'],None)
+                #pp(sD[v['sp']]['grcv']*v['gr'])
+                try:
+                    iD[i]['gr']=np.random.normal(v['gr'],sD[v['sp']]['grcv']*v['gr'],None)
+                    iD[i]['mt']=np.random.normal(v['mt'],sD[v['sp']]['mtcv']*v['mt'],None)
+                except ValueError:
+                    del iD[k]; continue
+                iD[i]['q']=(v['q'])/(0.85)*(0.15)
+                iD[i]['age']=0
+                #if iD[i]['q']>1:
+                #    iD[i]['q']=1
+                #need to add an 'age' initiator to the run_model function, I think
+                #temp=np.random.uniform(np.random.normal(v['gr'],v['grcv']*v['gr'],None)
+                #iD[i]['gr']=np.random.uniform(temp*tradeoff_reverse_logistic(iD[i]['rls']),temp)
+                '''by determining tradeoff at the species level instead of at indiv level,
+                lineages are able to evolve reduced tradeoffs
+                if I want to make the tradeoffs stickier, I can re-enforce them at the indiv level'''
     return [sD, iD]
 
 
@@ -151,7 +194,7 @@ def iter_procs(iD, sD, rD, ps, ct):
 
 
 def ResIn(rD, ps):
-    r, u, gr, mt, q = ps
+    r, u, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv = ps
     for i in range(r):
         p = np.random.binomial(1, u)
         if p == 1:
@@ -161,23 +204,28 @@ def ResIn(rD, ps):
     return rD
 
 
-#need to add initiator for RLSmax for each indiv
+#need to add initiator for rlsmax for each indiv
 
-def run_model(sim, gr, mt, q, rD = {}, sD = {}, iD = {}, ct = 0, splist2 = []):
+def run_model(sim, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, rD = {}, sD = {}, iD = {}, ct = 0, splist2 = []):
     print '\n'
     r = 10**randint(0, 2)
     u = 10**np.random.uniform(-2, 0)
-    ps = r, u, gr, mt, q
+    ps = r, u, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv
 
-    sD, iD = immigration(sD, iD, ps, 1000)
-    while ct < 300:
+    sD, iD = immigration(sD, iD, ps, 1000)#this is the initial number of indivs
+    while ct < 300:#this is the number of timesteps
         iD, sD, rD, N, ct = iter_procs(iD, sD, rD, ps, ct)
-        if ct > 200 and ct%10 == 0: output(iD, sD, rD, sim, ct)
+        #if ct > 200 and ct%10 == 0: output(iD, sD, rD, sim, ct)
 
 
 
-for sim in range(100000):
-    gr = choice([-2.5, -2.0, -1.5, -1.0])
-    mt = choice([-2.0, -1.5, -1.0])
+for sim in range(10):#number of different models run (had been set at 10**6)
+    gr = np.random.uniform(-2,-1)
+    mt = np.random.uniform(-2,-1)
+    rls_min = randint(1,10)
+    rls_max = randint(rls_min,100)
+    grcv = np.random.uniform(-6,-5)
+    mtcv = np.random.uniform(-6,-5)
+    rlscv = np.random.uniform(-6,-5)
     q = choice([1, 2])
-    run_model(sim, gr, mt, q)
+    run_model(sim, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv)
