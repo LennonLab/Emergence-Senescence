@@ -75,7 +75,6 @@ def output(iD, sD, rD, sim, ct):
     print 'sim:', '%3s' % sim, 'ct:', '%3s' % ct,'  N:', '%4s' %  N, '  S:', '%4s' %  S,  '  R:', '%4s' %  R
     return
 
-
 def immigration(sD, iD, ps, sd=1):
     r, u, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, a = ps
 
@@ -85,7 +84,7 @@ def immigration(sD, iD, ps, sd=1):
         if p not in sD:
             sD[p] = {'gr-unconstrained' : 10**np.random.uniform(gr, 0)}
             sD[p]['mt'] = 10**np.random.uniform(mt, 0)
-            sD[p]['rls'] = randint(rls_min,rls_max)
+            sD[p]['rls'] = 25#randint(rls_min,rls_max)
             temp=sD[p]['gr-unconstrained']; sD[p]['gr']=np.random.uniform(temp*tradeoff_reverse_logistic(sD[p]['rls']),temp)
             sD[p]['elto']=(sD[p]['gr']/sD[p]['gr-unconstrained'])
             sD[p]['grcv']=10**np.random.uniform(grcv,-0.3)
@@ -107,16 +106,16 @@ def immigration(sD, iD, ps, sd=1):
         iD[ID]['y'] = 0
         iD[ID]['rls']=sD[p]['rls']; iD[ID]['mt']=sD[p]['mt']; iD[ID]['ef']=sD[p]['ef']
         temp2=sD[p]['gr']
-        if iD[ID]['age']<1:
-            iD[ID]['gr']=temp2*g0delay(iD[ID]['rls'])
-            iD[ID]['g0gr']=g0delay(iD[ID]['rls'])
+        if iD[ID]['age']<2:
+            iD[ID]['gr']=temp2*(g0delay(iD[ID]['rls'])**2)
+            iD[ID]['g1gr']=g0delay(iD[ID]['rls'])
         else:
             iD[ID]['gr']=sD[p]['gr']
+            iD[ID]['g1gr']=1
         iD[ID]['a']=sD[p]['a']
         iD[ID]['elto']=(iD[ID]['gr'])/(sD[p]['gr'])
         iD[ID]['q'] = 10**np.random.uniform(0, q)
     return [sD, iD]
-
 
 def consume(iD, rD, ps):
     r, u, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, a = ps
@@ -161,16 +160,16 @@ def maintenance(iD):#mt is less for juveniles
 
 def reproduce(sD, iD, ps, p = 0):
     for k, v in iD.items():
-        if v['gr'] > 1 or v['gr'] <= 0:
-            del iD[k]; continue
+        if v['gr'] > 1 or v['gr'] < 0:
+            del iD[k]
         elif v['q'] > v['mt']/(0.5+v['a']) and np.random.binomial(1, v['gr']) == 1:
             if v['age'] >= v['rls'] or v['mt']<0:
-                del iD[k]; continue
+                del iD[k]
             else:
                 iD[k]['q'] = v['q']*(0.5+v['a'])
                 iD[k]['age']+=1
-                if iD[k]['age']==1:
-                    iD[k]['gr']=v['gr']/v['g0gr']
+                if iD[k]['age']==2:
+                    iD[k]['gr']=v['gr']/v['g1gr']
                 iD[k]['gr']=v['gr']/(senesce_simple((v['age']-1),v['rls']))*(senesce_simple(v['age'],v['rls']))
                 
                 #modifier based on the newly incremented age value, after removing the gr reduction due to previous age
@@ -186,20 +185,24 @@ def reproduce(sD, iD, ps, p = 0):
                     iD[i]['mt']=np.random.normal(v['mt'],sD[v['sp']]['mtcv']*v['mt'],None)
 #is total ef allowed to != 1
                 except ValueError:
-                    del iD[k]; continue
+                    del iD[i]; continue
+
+                if iD[i]['gr'] > 1 or iD[i]['gr'] < 0:
+                    del iD[i]; continue
                 '''for index,e in enumerate(iD[i]['ef']):
                     iD[i]['ef'][index]=np.random.normal(v['ef'][index],sD[v['sp']]['efcv']*v['ef'][index],None)      
                 pp(sum(iD[i]['ef']))'''
 
                 #instead of messing with the efs, you had the idea of giving another entry in the iD
-#which specfies the function of competitiveness gain for aging cells...                
+                #which specfies the function of competitiveness gain for aging cells...                
                 
                 #temp3=iD[i]['gr']
                 #iD[i]['gr']=np.random.uniform(temp3*tradeoff_reverse_logistic(iD[ID]['rls']),temp3)
                 #iD[i]['elto']=(iD[i]['gr'])/(temp3)
                 temp4=iD[i]['gr']
-                iD[i]['gr']=temp4*g0delay(v['rls'])
-                iD[i]['g0gr']=g0delay(v['rls'])
+                del iD[i]; continue
+                iD[i]['gr']=temp4*(g0delay(v['rls'])**2)
+                iD[i]['g1gr']=g0delay(v['rls'])
                 iD[i]['q']=(v['q'])/(0.5+v['a'])*(0.5-v['a'])
                 iD[i]['age']=0
                 #if iD[i]['q']>1:
@@ -209,11 +212,9 @@ def reproduce(sD, iD, ps, p = 0):
                 #iD[i]['gr']=np.random.uniform(temp*tradeoff_reverse_logistic(iD[i]['rls']),temp)
                 '''by determining tradeoff at the species level instead of at indiv level,
                 lineages are able to evolve reduced tradeoffs
-                if I want to make the tradeoffs stickier, I can re-enforce them at the indiv level.
+                if I want to make the tradeoffs stickier, I re-enforce them at the indiv level.
                 I also am struggling to add early-life tradeoffs using the species-level thing :/'''
     return [sD, iD]
-
-
 
 def iter_procs(iD, sD, rD, ps, ct):
     procs = range(6)
@@ -228,8 +229,6 @@ def iter_procs(iD, sD, rD, ps, ct):
     N = len(list(iD))
     return [iD, sD, rD, N, ct+1]
 
-
-
 def ResIn(rD, ps):
     r, u, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, a = ps
     for i in range(r):
@@ -240,9 +239,6 @@ def ResIn(rD, ps):
             rD[ID]['v'] = 10**np.random.uniform(0, 2)
     return rD
 
-
-#need to add initiator for rlsmax for each indiv
-
 def run_model(sim, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, a=0, rD = {}, sD = {}, iD = {}, ct = 0, splist2 = []):
     print '\n'
     r = 10**randint(0, 2)
@@ -252,9 +248,7 @@ def run_model(sim, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, a=0, rD
     sD, iD = immigration(sD, iD, ps, 1000)#this is the initial number of indivs
     while ct < 300:#this is the number of timesteps
         iD, sD, rD, N, ct = iter_procs(iD, sD, rD, ps, ct)
-        #if ct > 200 and ct%10 == 0: output(iD, sD, rD, sim, ct)
-
-
+        if ct > 200 and ct%10 == 0: output(iD, sD, rD, sim, ct)
 
 for sim in range(10):#number of different models run (had been set at 10**6)
     gr = np.random.uniform(-2,-1)
