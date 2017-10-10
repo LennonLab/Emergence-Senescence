@@ -169,7 +169,7 @@ def reproduce(sD, iD, ps, p = 0):
                 iD[k]['q'] = v['q']*(0.5+v['a'])
                 iD[k]['age']+=1
                 if iD[k]['age']==2:
-                    iD[k]['gr']=v['gr']/v['g1gr']
+                    iD[k]['gr']=v['gr']/(v['g1gr']**2)
                 iD[k]['gr']=v['gr']/(senesce_simple((v['age']-1),v['rls']))*(senesce_simple(v['age'],v['rls']))
                 
                 #modifier based on the newly incremented age value, after removing the gr reduction due to previous age
@@ -200,7 +200,6 @@ def reproduce(sD, iD, ps, p = 0):
                 #iD[i]['gr']=np.random.uniform(temp3*tradeoff_reverse_logistic(iD[ID]['rls']),temp3)
                 #iD[i]['elto']=(iD[i]['gr'])/(temp3)
                 temp4=iD[i]['gr']
-                del iD[i]; continue
                 iD[i]['gr']=temp4*(g0delay(v['rls'])**2)
                 iD[i]['g1gr']=g0delay(v['rls'])
                 iD[i]['q']=(v['q'])/(0.5+v['a'])*(0.5-v['a'])
@@ -221,7 +220,7 @@ def iter_procs(iD, sD, rD, ps, ct):
     shuffle(procs)
     for p in procs:
         if p == 0: rD = ResIn(rD, ps)
-        elif p == 1: sD, iD = immigration(sD, iD, ps)
+        elif p == 1: pass#sD, iD = immigration(sD, iD, ps)
         elif p == 2: iD, rD = consume(iD, rD, ps)
         elif p == 3: iD = grow(iD)
         elif p == 4: iD = maintenance(iD)
