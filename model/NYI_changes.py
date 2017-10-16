@@ -1,5 +1,5 @@
 from __future__ import division
-from random import shuffle, choice, randint
+from random import shuffle, choice, randint, seed
 from os.path import expanduser
 from numpy import log10
 from scipy import stats
@@ -10,6 +10,7 @@ import copy
 import sys
 import os
 from pprint import pprint as pp
+
 
 
 mydir = expanduser("~/")
@@ -240,7 +241,7 @@ def iter_procs(iD, sD, rD, ps, ct):
     shuffle(procs)
     for p in procs:
         if p == 0: rD = ResIn(rD, ps)
-        elif p == 1: sD, iD = immigration(sD, iD, ps)
+        elif p == 1: pass#sD, iD = immigration(sD, iD, ps)
         elif p == 2: iD, rD = consume(iD, rD, ps)
         elif p == 3: iD = grow(iD)
         elif p == 4: iD = maintenance(iD)
@@ -267,11 +268,14 @@ def run_model(sim, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, a=0, rD
     sD, iD = immigration(sD, iD, ps, 1000)#this is the initial number of indivs
     while ct < 300:#this is the number of timesteps
         iD, sD, rD, N, ct = iter_procs(iD, sD, rD, ps, ct)
-        if ct > 200 and ct%10 == 0:           
+        if ct > 0 and ct%10 == 1:           
             output(iD, sD, rD, sim, ct)
+    if ct == 300:
+        iD={};sD={};rD={};N=0;ct=0
             
 
 for sim in range(10):#number of different models run (had been set at 10**6)
+    seed(time.time())
     gr = np.random.uniform(-2,-1)
     mt = np.random.uniform(-2,-1)
     rls_min = randint(1,10)
