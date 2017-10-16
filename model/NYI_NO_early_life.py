@@ -1,5 +1,5 @@
 from __future__ import division
-from random import shuffle, choice, randint
+from random import shuffle, choice, randint, seed
 from os.path import expanduser
 from numpy import log10
 from scipy import stats
@@ -16,8 +16,8 @@ mydir = expanduser("~/")
 sys.path.append(mydir + "GitHub/Emergence-Senescence/model")
 GenPath = mydir + "GitHub/Emergence-Senescence/results/simulated_data/"
 
-col_headers = 'sim,gr,mt,q,ct,total.abundance,species.richness,simpson.e,N.max,logmod.skew'
-OUT = open(GenPath + 'SimData.csv', 'w+')
+col_headers = 'sim,r,gr,mt,q,rls_min,rls_max,grcv,mtcv,rlscv,ct,rlsmean,rlsvar,total.abundance,species.richness,simpson.e,N.max,logmod.skew'
+OUT = open(GenPath + '20171016_1118_SimData.csv', 'w+')
 print>>OUT, col_headers
 OUT.close()
 
@@ -38,9 +38,8 @@ def e_simpson(sad):
     E = round((1.0/D)/S, 4)
     return E
     
-#def 
-    
-senesce_simple = lambda age, rls: 1-(age/rls)
+senesce_simple = lambda age, rls: (1-(age/(rls+0.01)))
+#senesce_simple = lambda age, rls: 1
 
 
 #tradeoff_reverse_logistic = lambda rls: 2 / (2 + math.exp((0.2*rls)-12))#in the full implementation, don't enforce these parameters
@@ -51,7 +50,7 @@ g0delay = lambda rls: 1 / (1 + (rls/100))
 
 #competitive_growth = lambda age: 
 
-def output(iD, sD, rD, sim, ct):
+def output(iD, sD, rD, sim, ct, r):
     IndIDs, SpIDs = [], []
     for k, v in iD.items():
             IndIDs.append(k)
@@ -83,7 +82,7 @@ def output(iD, sD, rD, sim, ct):
             
 
         OUT = open(GenPath + 'SimData.csv', 'a')
-        outlist = [sim, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, ct, rlsmean, rlsvar, N, S, ES, Nm, lms]
+        outlist = [sim, r, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, ct, rlsmean, rlsvar, N, S, ES, Nm, lms]
         outlist = str(outlist).strip('[]')
         outlist = outlist.replace(" ", "")
         print>>OUT, outlist
@@ -103,10 +102,10 @@ def immigration(sD, iD, ps, sd=1):
         if p not in sD:
             sD[p] = {'gr' : 10**np.random.uniform(gr, 0)}
             sD[p]['mt'] = 10**np.random.uniform(mt, 0)
-            sD[p]['rls'] = randint(rls_min,rls_max)
+            sD[p]['rls'] = 50#randint(rls_min,rls_max)
             sD[p]['grcv']=10**np.random.uniform(-6.01,grcv)
             sD[p]['mtcv']=10**np.random.uniform(-6.01,mtcv)
-            sD[p]['rlscv']=10**np.random.uniform(-6.01,rlscv)
+            sD[p]['rlscv']=.3#10**np.random.uniform(-6.01,rlscv)
             sD[p]['efcv']=10**np.random.uniform(-6.01,efcv)
             es = np.random.uniform(1, 100, 3)
             sD[p]['ef'] = es/sum(es)
@@ -173,19 +172,21 @@ def reproduce(sD, iD, ps, p = 0):
                 del iD[k]
             else:
                 iD[k]['q'] = v['q']*(0.5+v['a'])
-                iD[k]['age']+=1
+                grorig=(v['gr'])/(senesce_simple(v['age'],v['rls']))
                 iD[k]['gr']=v['gr']/(senesce_simple((v['age']-1),v['rls']))*(senesce_simple(v['age'],v['rls']))
                 
                 #modifier based on the newly incremented age value, after removing the gr reduction due to previous age
                 #in full implementation the sscnc model will be chosen at random from a list of choices
                 i = time.time()
                 iD[i] = copy.deepcopy(iD[k])
+                iD[k]['age']+=1
                 #in addition to copying physiology, need to copy the rlsmax---
                 #rlsmax is determined genetically so there should be a chance of mutation, here with normally distributed
                 #effect sizes
-                iD[i]['rls']=np.random.normal(v['rls'],sD[v['sp']]['rlscv']*v['rls'],None)
+                iD[i]['rls']=np.random.normal((v['rls']),sD[v['sp']]['rlscv']*v['rls'],None)
+                #pp(iD[k]['age']);pp(iD[k]['rls'])
                 try:
-                    iD[i]['gr']=np.random.normal(v['gr'],sD[v['sp']]['grcv']*v['gr'],None)#these should not be normal distrns, should be negv-biased
+                    iD[i]['gr']=np.random.normal(grorig,(sD[v['sp']]['grcv']*grorig),None)#these should not be normal distrns, should be negv-biased
                     iD[i]['mt']=np.random.normal(v['mt'],sD[v['sp']]['mtcv']*v['mt'],None)
 #is total ef allowed to != 1
                 except ValueError:
@@ -202,7 +203,7 @@ def iter_procs(iD, sD, rD, ps, ct):
     shuffle(procs)
     for p in procs:
         if p == 0: rD = ResIn(rD, ps)
-        elif p == 1: sD, iD = immigration(sD, iD, ps)
+        elif p == 1: pass#sD, iD = immigration(sD, iD, ps)
         elif p == 2: iD, rD = consume(iD, rD, ps)
         elif p == 3: iD = grow(iD)
         elif p == 4: iD = maintenance(iD)
@@ -222,18 +223,26 @@ def ResIn(rD, ps):
 
 def run_model(sim, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, a=0, rD = {}, sD = {}, iD = {}, ct = 0, splist2 = []):
     print '\n'
-    r = 100#10**randint(0, 2)
+    rD={};iD={};sD={}
+    if iD=={} and sD=={} and rD=={}:
+        pass
+    else:
+        sys.exit()
+    r = choice([5,159])#10**randint(0, 2)
     u = 10**np.random.uniform(-2, 0)
     ps = r, u, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, a
 
     sD, iD = immigration(sD, iD, ps, 1000)#this is the initial number of indivs
-    while ct < 300:#this is the number of timesteps
+    while ct < 5000:#this is the number of timesteps
+        if ct < 1:
+            print str(rls_min) + ' ' + str(rls_max) + " " + str(r)
         iD, sD, rD, N, ct = iter_procs(iD, sD, rD, ps, ct)
-        if ct > 200 and ct%10 == 0:           
-            output(iD, sD, rD, sim, ct)
+        if (ct > 4000 and ct%100 == 0) or (ct == 1):           
+            output(iD, sD, rD, sim, ct, r)
             
 
-for sim in range(10):#number of different models run (had been set at 10**6)
+for sim in range(100000):#number of different models run (had been set at 10**6)
+    seed(time.time())
     gr = np.random.uniform(-2,-1)
     mt = np.random.uniform(-2,-1)
     rls_min = randint(1,10)

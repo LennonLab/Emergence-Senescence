@@ -164,7 +164,7 @@ def run_model(sim, gr, mt, q, rD = {}, sD = {}, iD = {}, ct = 0, splist2 = []):
     sD, iD = immigration(sD, iD, ps, 1000)
     while ct < 300:
         iD, sD, rD, N, ct = iter_procs(iD, sD, rD, ps, ct)
-        if ct > 200 and ct%10 == 0: output(iD, sD, rD, sim, ct)
+        if ct > 0 and ct%10 == 1: output(iD, sD, rD, sim, ct)
 
 
 
