@@ -1,0 +1,14 @@
+#!/bin/bash
+#PBS -k o
+#PBS -l nodes=1:ppn=4,vmem=500gb,walltime=96:30:00
+#PBS -M rzmogerr@indiana.edu
+#PBS -m abe
+#PBS -N SSCCsimple
+#PBS -j oe
+
+module unload python
+module load anaconda
+
+cd /N/u/rzmogerr/Carbonate
+source activate py27
+python GitHub/Emergence-Senescence/model/NYI_SSCCSIMPLE.py

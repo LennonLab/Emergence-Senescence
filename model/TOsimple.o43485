@@ -1,0 +1,155 @@
+gcc version 6.3.0 loaded.
+Intel compiler suite version 17.0.3 loaded.
+Python programming language version 2.7.13 loaded.
+Perl programming language version 5.24.1 loaded.
+IU-Quota version 1.0 loaded.
+Python programming language version 2.7.13 unloaded.
+Anaconda3.6 version 4.3.1 loaded.
+
+
+6 98 100
+sim:   0 ct:   1   N: 1155   S:  586   R:   27 LSm:50.0796395976 LSv:11.7293969911
+sim:   0 ct: 1500   N: 13224   S:   14   R:    0 LSm:50.6680684023 LSv:404.280069995
+sim:   0 ct: 1600   N: 13489   S:   11   R:   74 LSm:50.7480878213 LSv:431.831000338
+sim:   0 ct: 1700   N: 13128   S:   10   R:   83 LSm:50.7105419178 LSv:456.374412481
+sim:   0 ct: 1800   N: 13209   S:    9   R:    0 LSm:50.0554578718 LSv:447.060992724
+sim:   0 ct: 1900   N: 13224   S:    9   R:    0 LSm:50.3519075802 LSv:477.500955536
+sim:   0 ct: 2000   N: 13913   S:    9   R:    0 LSm:50.1164801621 LSv:502.284480916
+
+
+9 40 10
+sim:   1 ct:   1   N: 1171   S:  625   R:    2 LSm:49.9556884316 LSv:8.06985138851
+sim:   1 ct: 1500   N:  123   S:    3   R:    0 LSm:47.9774608854 LSv:160.82291725
+sim:   1 ct: 1600   N:  139   S:    3   R:    1 LSm:46.0705697061 LSv:133.037646836
+sim:   1 ct: 1700   N:  144   S:    3   R:    1 LSm:46.6162729503 LSv:127.129216973
+sim:   1 ct: 1800   N:  138   S:    3   R:    1 LSm:46.3301823141 LSv:146.610307575
+sim:   1 ct: 1900   N:  156   S:    3   R:    0 LSm:48.2080959473 LSv:144.11788437
+sim:   1 ct: 2000   N:  166   S:    3   R:    0 LSm:45.191694472 LSv:183.257578398
+
+
+4 53 100
+sim:   2 ct:   1   N: 1144   S:  608   R:    0 LSm:50.0023800493 LSv:7.98961151118
+sim:   2 ct: 1500   N: 7846   S:   24   R:   56 LSm:53.6520066442 LSv:336.434538769
+sim:   2 ct: 1600   N: 8071   S:   24   R:    0 LSm:53.7571765291 LSv:342.898993191
+sim:   2 ct: 1700   N: 7962   S:   22   R:   61 LSm:54.4377984026 LSv:344.755195072
+sim:   2 ct: 1800   N: 8513   S:   21   R:   60 LSm:54.2587712583 LSv:378.10504737
+sim:   2 ct: 1900   N: 8663   S:   21   R:   54 LSm:55.0908523652 LSv:392.506292948
+sim:   2 ct: 2000   N: 8817   S:   15   R:    0 LSm:55.2103678477 LSv:403.81830468
+
+
+4 31 100
+sim:   3 ct:   1   N: 1111   S:  607   R:    0 LSm:49.8397322468 LSv:9.09193167835
+sim:   3 ct: 1500   N:  348   S:    4   R:   12 LSm:45.8278128746 LSv:210.22859001
+sim:   3 ct: 1600   N:  354   S:    4   R:    0 LSm:45.1345775932 LSv:231.308351847
+sim:   3 ct: 1700   N:  417   S:    2   R:    8 LSm:44.2247575497 LSv:238.96214281
+sim:   3 ct: 1800   N:  371   S:    2   R:   13 LSm:47.2650810262 LSv:320.990208607
+sim:   3 ct: 1900   N:  395   S:    1   R:    4 LSm:46.9121296792 LSv:333.694817399
+sim:   3 ct: 2000   N:  391   S:    1   R:    5 LSm:48.1757811217 LSv:369.017063043
+
+
+10 86 100
+sim:   4 ct:   1   N: 1107   S:  610   R:    0 LSm:49.9734282953 LSv:9.52880209822
+sim:   4 ct: 1500   N:  161   S:    2   R:    6 LSm:38.5122909102 LSv:266.143763992
+sim:   4 ct: 1600   N:  201   S:    2   R:    0 LSm:36.8068753933 LSv:210.73767282
+sim:   4 ct: 1700   N:  137   S:    2   R:    1 LSm:35.2046726606 LSv:229.55000223
+sim:   4 ct: 1800   N:  175   S:    2   R:    0 LSm:36.7680962938 LSv:248.907533694
+sim:   4 ct: 1900   N:  188   S:    2   R:    3 LSm:39.7995094152 LSv:343.4619112
+sim:   4 ct: 2000   N:  188   S:    2   R:    2 LSm:44.2065682724 LSv:410.098716443
+
+
+6 100 10
+sim:   5 ct:   1   N: 1118   S:  632   R:    6 LSm:50.0314793934 LSv:7.94262168507
+sim:   5 ct: 1500   N:  633   S:    5   R:   10 LSm:56.8919035267 LSv:363.744279835
+sim:   5 ct: 1600   N:  610   S:    5   R:    0 LSm:57.7936908861 LSv:445.607373984
+sim:   5 ct: 1700   N:  687   S:    4   R:    7 LSm:57.5670153922 LSv:433.696155145
+sim:   5 ct: 1800   N:  698   S:    4   R:    8 LSm:55.1949485849 LSv:378.768911016
+sim:   5 ct: 1900   N:  702   S:    4   R:    5 LSm:56.5366444983 LSv:462.987956025
+sim:   5 ct: 2000   N:  690   S:    4   R:    0 LSm:55.5706170049 LSv:446.721933695
+
+
+10 48 100
+sim:   6 ct:   1   N: 1145   S:  616   R:    0 LSm:49.796766676 LSv:8.14082776946
+sim:   6 ct: 1500   N:  779   S:    5   R:    4 LSm:57.3476160856 LSv:285.684049087
+sim:   6 ct: 1600   N:  717   S:    4   R:    0 LSm:56.5410671726 LSv:299.100207083
+sim:   6 ct: 1700   N:  759   S:    4   R:    3 LSm:54.7582374637 LSv:302.605459352
+sim:   6 ct: 1800   N:  801   S:    4   R:    5 LSm:54.9601828148 LSv:312.443663306
+sim:   6 ct: 1900   N:  799   S:    4   R:    3 LSm:53.829794801 LSv:284.824076484
+sim:   6 ct: 2000   N:  803   S:    4   R:    5 LSm:55.635671825 LSv:297.456599579
+
+
+1 12 10
+sim:   7 ct:   1   N: 1179   S:  632   R:    0 LSm:50.0234701028 LSv:9.904916296
+sim:   7 ct: 1500   N:   62   S:    2   R:    0 LSm:53.396343059 LSv:83.1252655983
+sim:   7 ct: 1600   N:   35   S:    2   R:    3 LSm:54.5866722774 LSv:116.730112697
+sim:   7 ct: 1700   N:   51   S:    2   R:    0 LSm:51.9959919336 LSv:235.233291848
+sim:   7 ct: 1800   N:   34   S:    2   R:    1 LSm:51.3624420054 LSv:224.617423028
+sim:   7 ct: 1900   N:   52   S:    2   R:    0 LSm:51.2222995731 LSv:315.360453673
+sim:   7 ct: 2000   N:   66   S:    2   R:    1 LSm:61.8293344402 LSv:573.559814896
+
+
+8 76 10
+sim:   8 ct:   1   N: 1145   S:  613   R:    7 LSm:50.2076105183 LSv:8.41171606062
+sim:   8 ct: 1500   N:  971   S:    8   R:    0 LSm:51.3054688049 LSv:296.591016371
+sim:   8 ct: 1600   N: 1004   S:    8   R:    0 LSm:52.017444777 LSv:291.677714692
+sim:   8 ct: 1700   N: 1008   S:    8   R:    0 LSm:52.9069409105 LSv:287.632015894
+sim:   8 ct: 1800   N: 1003   S:    6   R:    6 LSm:53.6770447115 LSv:340.487443489
+sim:   8 ct: 1900   N: 1060   S:    6   R:    6 LSm:51.5878907979 LSv:325.772321871
+sim:   8 ct: 2000   N: 1018   S:    6   R:    0 LSm:51.4073506773 LSv:330.306427003
+
+
+7 53 10
+sim:   9 ct:   1   N: 1009   S:  567   R:    0 LSm:50.0385108546 LSv:7.07787576051
+sim:   9 ct: 1500   N:   30   S:    2   R:    1 LSm:59.6822420279 LSv:236.761992567
+sim:   9 ct: 1600   N:   40   S:    2   R:    0 LSm:60.8801783684 LSv:254.617607408
+sim:   9 ct: 1700   N:   24   S:    2   R:    0 LSm:53.4559204328 LSv:112.244640002
+sim:   9 ct: 1800   N:   54   S:    2   R:    0 LSm:60.0296491598 LSv:235.701769462
+sim:   9 ct: 1900   N:   49   S:    2   R:    0 LSm:56.6701978575 LSv:277.124498125
+sim:   9 ct: 2000   N:   26   S:    2   R:    0 LSm:53.0656627936 LSv:146.12314941
+
+
+6 32 100
+sim:  10 ct:   1   N: 1271   S:  596   R:    8 LSm:49.89481695 LSv:16.9065207517
+sim:  10 ct: 1500   N:  739   S:    2   R:    9 LSm:46.6245295878 LSv:378.062212892
+sim:  10 ct: 1600   N:  761   S:    2   R:   10 LSm:45.7983513508 LSv:613.98074797
+sim:  10 ct: 1700   N:  656   S:    2   R:    7 LSm:48.5248879228 LSv:736.945981736
+sim:  10 ct: 1800   N:  727   S:    2   R:   15 LSm:52.7214314654 LSv:1049.90621357
+sim:  10 ct: 1900   N:  668   S:    2   R:    0 LSm:48.7256049838 LSv:1148.531386
+sim:  10 ct: 2000   N:  751   S:    2   R:    0 LSm:47.2700394004 LSv:804.531316246
+
+
+5 15 100
+sim:  11 ct:   1   N: 1025   S:  602   R:   21 LSm:50.0669492617 LSv:5.79744402235
+sim:  11 ct: 1500   N: 9897   S:   21   R:    0 LSm:49.2626749706 LSv:289.172098362
+sim:  11 ct: 1600   N: 9717   S:   21   R:   90 LSm:49.6461780442 LSv:308.692874924
+sim:  11 ct: 1700   N: 9866   S:   21   R:    0 LSm:49.8772439534 LSv:328.698320912
+sim:  11 ct: 1800   N: 9905   S:   17   R:   81 LSm:49.691067456 LSv:322.759120071
+sim:  11 ct: 1900   N: 9901   S:   17   R:   76 LSm:50.0364234909 LSv:339.660708049
+sim:  11 ct: 2000   N: 10158   S:   16   R:   81 LSm:49.670492769 LSv:357.618551447
+
+
+4 83 100
+sim:  12 ct:   1   N: 1162   S:  618   R:    0 LSm:50.1163656447 LSv:9.3871302348
+sim:  12 ct: 1500   N: 12222   S:   20   R:   78 LSm:48.8147898746 LSv:341.544949034
+sim:  12 ct: 1600   N: 12739   S:   16   R:   72 LSm:48.6905168655 LSv:336.119374028
+sim:  12 ct: 1700   N: 12875   S:   16   R:    0 LSm:48.3036692839 LSv:343.735850944
+sim:  12 ct: 1800   N: 12544   S:   16   R:    0 LSm:48.3638996804 LSv:345.33114949
+sim:  12 ct: 1900   N: 12380   S:   13   R:   65 LSm:48.2604488509 LSv:358.996463704
+sim:  12 ct: 2000   N: 12365   S:   13   R:   69 LSm:48.745889305 LSv:369.245944767
+
+
+6 29 100
+sim:  13 ct:   1   N: 1118   S:  592   R:    1 LSm:49.9543236313 LSv:11.022226696
+sim:  13 ct: 1500   N:   99   S:    3   R:    0 LSm:53.9966000105 LSv:198.303881033
+sim:  13 ct: 1600   N:  101   S:    3   R:    0 LSm:55.1653990785 LSv:173.14418174
+sim:  13 ct: 1700   N:   90   S:    2   R:    3 LSm:54.7364836168 LSv:242.220634368
+sim:  13 ct: 1800   N:   87   S:    2   R:    0 LSm:50.2989792734 LSv:166.765728489
+sim:  13/N/u/rzmogerr/Carbonate/.conda/envs/py27/lib/python2.7/site-packages/numpy/core/fromnumeric.py:2909: RuntimeWarning: Mean of empty slice.
+  out=out, **kwargs)
+/N/u/rzmogerr/Carbonate/.conda/envs/py27/lib/python2.7/site-packages/numpy/core/_methods.py:80: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+/N/u/rzmogerr/Carbonate/.conda/envs/py27/lib/python2.7/site-packages/numpy/core/fromnumeric.py:3146: RuntimeWarning: Degrees of freedom <= 0 for slice
+  **kwargs)
+/N/u/rzmogerr/Carbonate/.conda/envs/py27/lib/python2.7/site-packages/numpy/core/_methods.py:105: RuntimeWarning: invalid value encountered in true_divide
+  arrmean, rcount, out=arrmean, casting='unsafe', subok=False)
+/N/u/rzmogerr/Carbonate/.conda/envs/py27/lib/python2.7/site-packages/numpy/core/_methods.py:127: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
