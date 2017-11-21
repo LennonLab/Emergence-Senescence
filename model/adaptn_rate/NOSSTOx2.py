@@ -16,9 +16,9 @@ mydir = expanduser("~/")
 sys.path.append(mydir + "GitHub/Emergence-Senescence/model")
 GenPath = mydir + "GitHub/Emergence-Senescence/results/simulated_data/"
 
-col_headers = 'sim,r,gr,mt,q,rls_min,rls_max,grcv,mtcv,rlscv,ct,rlsmean,rlsvar,total.abundance,species.richness'
+col_headers = 'sim,r,gr,mt,q,rls_min,rls_max,grcv,mtcv,rlscv,ct,rlsmean,mtmean,mtmax,total.abundance,species.richness'
 #OUT = open(GenPath + '20171016_1416_SimData_nossccnonoto.csv', 'w+')
-OUT=open("/gpfs/home/r/z/rzmogerr/Carbonate/NOSSNOTOSIMPLE.csv",'w+')
+OUT=open("/gpfs/home/r/z/rzmogerr/Carbonate/NOSSTOx2.csv",'w+')
 print>>OUT, col_headers
 OUT.close()
 
@@ -30,9 +30,9 @@ def senesce_simple(age,rls):# = lambda age, rls: (age/age)*(rls/rls)
     except ZeroDivisionError:
         return 1
 
-#tradeoff_reverse_logistic = lambda rls: 2 / (2 + math.exp((0.2*rls)-12))#in the full implementation, don't enforce these parameters
+tradeoff_reverse_logistic = lambda rls: 2 / (2 + math.exp((0.2*rls)-8))#in the full implementation, don't enforce these parameters
 #tradeoff_reverse_logistic = lambda rls: 2 / (2 + math.exp((0.2*rls)-4))
-tradeoff_reverse_logistic = lambda rls: rls/rls
+#tradeoff_reverse_logistic = lambda rls: rls/rls
 
 g0delay = lambda rls: 1 / (1 + (rls/100))
 
@@ -54,21 +54,32 @@ def output(iD, sD, rD, sim, ct, r):
     #for i in IndIDs:
     #    RLSL.append(iD[i]['rls'])
     RLSL=[iD[i]['rls'] for i in IndIDs]
+    grL=[iD[i]['gr'] for i in IndIDs]
+    mtL=[iD[i]['mt'] for i in IndIDs]
     rlsmean = np.mean(RLSL)
-    rlsvar = np.var(RLSL)    
+    rlsvar = np.var(RLSL)
+    try:
+        grmax=max(grL)
+    except ValueError:
+        grmax=0
+    grmean=np.mean(grL)
+    try:
+        mtmax=max(mtL)
+    except ValueError:
+        mtmax=0
+    mtmean=np.mean(mtL)
 
     if N > 0:
         
-
         #OUT = open(GenPath + 'SimData.csv', 'a')
 	OUT=open("/gpfs/home/r/z/rzmogerr/Carbonate/NOSSNOTO.csv",'a+')
-        outlist = [sim, r, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, ct, rlsmean, rlsvar, N, S]
+        outlist = [sim, r, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, ct, rlsmean, mtmean, mtmax, N, S]
         outlist = str(outlist).strip('[]')
         outlist = outlist.replace(" ", "")
         print>>OUT, outlist
         OUT.close()
     try:
-        print 'sim:', '%3s' % sim, 'ct:', '%3s' % ct,'  N:', '%4s' %  N, '  S:', '%4s' %  S,  '  R:', '%4s' %  R, 'LSm:' '%1s' % rlsmean, 'LSv:' '%2s' % rlsvar
+        print 'sim:', '%3s' % sim, 'ct:', '%3s' % ct,'  N:', '%4s' %  N, '  S:', '%4s' %  S,  '  R:', '%4s' %  R, 'LSm:' '%1s' % rlsmean, 'mtu:' '%2s' % mtmean, 'mtm:' '%2s' % mtmax
     except UnboundLocalError:
         print 'ERROR: N=0'
     return
@@ -80,12 +91,13 @@ def immigration(sD, iD, ps, sd=1):
         if sd == 1 and np.random.binomial(1, u) == 0: continue
         p = np.random.randint(1, 1000)
         if p not in sD:
-            sD[p] = {'gr' : 10**np.random.uniform(gr, 0)}
-            sD[p]['mt'] = 10**np.random.uniform(mt, 0)
-            sD[p]['rls'] = 50#randint(rls_min,rls_max)
-            sD[p]['grcv']=10**np.random.uniform(-6.01,grcv)
-            sD[p]['mtcv']=10**np.random.uniform(-6.01,mtcv)
-            sD[p]['rlscv']=.15#10**np.random.uniform(-6.01,rlscv)
+            sD[p] = {'gr' : 0.1}
+            #sD[p] = {'gr' : 10**np.random.uniform(gr, 0)}
+            sD[p]['mt'] = 0.8#10**np.random.uniform(mt, 0)
+            sD[p]['rls'] = rls_max#randint(rls_min,rls_max)
+            sD[p]['grcv']=0#10**np.random.uniform(-6.01,grcv)
+            sD[p]['mtcv']=10**np.random.uniform(-2.5,-1)
+            sD[p]['rlscv']=0#10**np.random.uniform(-6.01,rlscv)
             sD[p]['efcv']=10**np.random.uniform(-6.01,efcv)
             es = np.random.uniform(1, 100, 3)
             sD[p]['ef'] = es/sum(es)
@@ -172,7 +184,7 @@ def reproduce(sD, iD, ps, p = 0):
                 except ValueError:
                     del iD[i]; continue
 
-                if iD[i]['gr'] > 1 or iD[i]['gr'] < 0:
+                if iD[i]['gr'] > 1 or iD[i]['gr'] < 0 or iD[i]['mt'] < 0.00001:
                     del iD[i]; continue
                 iD[i]['q']=(v['q'])/(0.5+v['a'])*(0.5-v['a'])
                 iD[i]['age']=0
@@ -221,12 +233,12 @@ def run_model(sim, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, a=0, rD
             output(iD, sD, rD, sim, ct, r)
             
 
-for sim in range(500):#number of different models run (had been set at 10**6)
+for sim in range(2000):#number of different models run (had been set at 10**6)
     seed(time.time())
     gr = np.random.uniform(-2,-1)
     mt = np.random.uniform(-2,-1)
     rls_min = randint(1,10)
-    rls_max = randint(rls_min,100)
+    rls_max = choice([5,50])#randint(rls_min,100)
     grcv = np.random.uniform(-6,-0.3)
     mtcv = np.random.uniform(-6,-0.3)
     rlscv = np.random.uniform(-6,-0.3)

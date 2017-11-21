@@ -1,0 +1,22 @@
+gcc version 6.3.0 loaded.
+Intel compiler suite version 17.0.3 loaded.
+Python programming language version 2.7.13 loaded.
+Perl programming language version 5.24.1 loaded.
+IU-Quota version 1.0 loaded.
+Python programming language version 2.7.13 unloaded.
+Anaconda3.6 version 4.3.1 loaded.
+
+
+6 60 10
+Traceback (most recent call last):
+  File "GitHub/Emergence-Senescence/model/NYI_NO_early_life.py", line 233, in <module>
+    run_model(sim, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, a)
+  File "GitHub/Emergence-Senescence/model/NYI_NO_early_life.py", line 216, in run_model
+    iD, sD, rD, N, ct = iter_procs(iD, sD, rD, ps, ct)
+  File "GitHub/Emergence-Senescence/model/NYI_NO_early_life.py", line 187, in iter_procs
+    elif p == 5: sD, iD = reproduce(sD, iD, ps)
+  File "GitHub/Emergence-Senescence/model/NYI_NO_early_life.py", line 153, in reproduce
+    iD[k]['gr']=v['gr']/(senesce_simple((v['age']-1),v['rls']))*(senesce_simple(v['age'],v['rls']))
+  File "GitHub/Emergence-Senescence/model/NYI_NO_early_life.py", line 27, in <lambda>
+    senesce_simple = lambda age, rls: (age/age)*(rls/rls)
+ZeroDivisionError: division by zero

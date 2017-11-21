@@ -22,7 +22,7 @@ print>>OUT, col_headers
 OUT.close()
     
 #senesce_simple = lambda age, rls: (1-(age/(rls+0.01)))
-senesce_simple = lambda age, rls: 1
+senesce_simple = lambda age, rls: (age/age)*(rls/rls)
 
 
 tradeoff_reverse_logistic = lambda rls: 2 / (2 + math.exp((0.2*rls)-8))#in the full implementation, don't enforce these parameters
