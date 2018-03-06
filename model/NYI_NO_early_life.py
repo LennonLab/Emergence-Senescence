@@ -16,31 +16,19 @@ mydir = expanduser("~/")
 sys.path.append(mydir + "GitHub/Emergence-Senescence/model")
 GenPath = mydir + "GitHub/Emergence-Senescence/results/simulated_data/"
 
-col_headers = 'sim,r,gr,mt,q,rls_min,rls_max,grcv,mtcv,rlscv,ct,rlsmean,rlsvar,total.abundance,species.richness,simpson.e,N.max,logmod.skew'
-OUT = open(GenPath + '20171016_1118_SimData.csv', 'w+')
+col_headers = 'sim,r,gr,mt,q,rls_min,rls_max,grcv,mtcv,rlscv,ct,rlsmean,rlsvar,total.abundance,species.richness'
+#OUT = open(GenPath + '20171016_1416_SimData_nossccnonoto.csv', 'w+')
+OUT=open("/gpfs/home/r/z/rzmogerr/Carbonate/NOSSNOTOSIMPLE.csv",'w+')
 print>>OUT, col_headers
 OUT.close()
 
-
-def GetRAD(vector):
-    RAD = []
-    unique = list(set(vector))
-    for val in unique: RAD.append(vector.count(val))
-    return RAD, unique
-
-
-def e_simpson(sad):
-    sad = filter(lambda a: a != 0, sad)
-    D = 0.0
-    N = sum(sad)
-    S = len(sad)
-    for x in sad: D += (x*x) / (N*N)
-    E = round((1.0/D)/S, 4)
-    return E
     
-senesce_simple = lambda age, rls: (1-(age/(rls+0.01)))
-#senesce_simple = lambda age, rls: 1
-
+#senesce_simple = lambda age, rls: (1-(age/(rls+0.01)))
+def senesce_simple(age,rls):# = lambda age, rls: (age/age)*(rls/rls)
+    try:
+        return (age/age)*(rls/rls)
+    except ZeroDivisionError:
+        return 1
 
 #tradeoff_reverse_logistic = lambda rls: 2 / (2 + math.exp((0.2*rls)-12))#in the full implementation, don't enforce these parameters
 #tradeoff_reverse_logistic = lambda rls: 2 / (2 + math.exp((0.2*rls)-4))
@@ -70,19 +58,11 @@ def output(iD, sD, rD, sim, ct, r):
     rlsvar = np.var(RLSL)    
 
     if N > 0:
-        RAD, splist = GetRAD(SpIDs)
-        ES = e_simpson(RAD)
-        Nm = max(RAD)
+        
 
-        skew = stats.skew(RAD)
-        lms = log10(abs(float(skew)) + 1)
-        if skew < 0: lms = lms * -1
-
-
-            
-
-        OUT = open(GenPath + 'SimData.csv', 'a')
-        outlist = [sim, r, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, ct, rlsmean, rlsvar, N, S, ES, Nm, lms]
+        #OUT = open(GenPath + 'SimData.csv', 'a')
+	OUT=open("/gpfs/home/r/z/rzmogerr/Carbonate/NOSSNOTO.csv",'a+')
+        outlist = [sim, r, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, ct, rlsmean, rlsvar, N, S]
         outlist = str(outlist).strip('[]')
         outlist = outlist.replace(" ", "")
         print>>OUT, outlist
@@ -105,7 +85,7 @@ def immigration(sD, iD, ps, sd=1):
             sD[p]['rls'] = 50#randint(rls_min,rls_max)
             sD[p]['grcv']=10**np.random.uniform(-6.01,grcv)
             sD[p]['mtcv']=10**np.random.uniform(-6.01,mtcv)
-            sD[p]['rlscv']=.3#10**np.random.uniform(-6.01,rlscv)
+            sD[p]['rlscv']=.15#10**np.random.uniform(-6.01,rlscv)
             sD[p]['efcv']=10**np.random.uniform(-6.01,efcv)
             es = np.random.uniform(1, 100, 3)
             sD[p]['ef'] = es/sum(es)
@@ -228,20 +208,20 @@ def run_model(sim, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, a=0, rD
         pass
     else:
         sys.exit()
-    r = choice([5,159])#10**randint(0, 2)
+    r = choice([10,100])#10**randint(0, 2)
     u = 10**np.random.uniform(-2, 0)
     ps = r, u, gr, mt, q, rls_min, rls_max, grcv, mtcv, rlscv, efcv, a
 
     sD, iD = immigration(sD, iD, ps, 1000)#this is the initial number of indivs
-    while ct < 5000:#this is the number of timesteps
+    while ct < 2000:#this is the number of timesteps
         if ct < 1:
             print str(rls_min) + ' ' + str(rls_max) + " " + str(r)
         iD, sD, rD, N, ct = iter_procs(iD, sD, rD, ps, ct)
-        if (ct > 4000 and ct%100 == 0) or (ct == 1):           
+        if (ct > 1400 and ct%100 == 0) or (ct == 1):           
             output(iD, sD, rD, sim, ct, r)
             
 
-for sim in range(100000):#number of different models run (had been set at 10**6)
+for sim in range(500):#number of different models run (had been set at 10**6)
     seed(time.time())
     gr = np.random.uniform(-2,-1)
     mt = np.random.uniform(-2,-1)
